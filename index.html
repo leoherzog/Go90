@@ -8,36 +8,58 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@next/css/pico.colors.min.css">
   <style>
     #chart {
+      display: flex;
       width: 100%;
       height: 100%;
+      justify-content: center;
+      align-items: center;
     }
-
   </style>
 </head>
 
 <body>
 
   <h1>The Go90 Scale of Doomed Streaming Services</h1>
-  <article>
+  <article style="margin:16px">
+    <div class="grid">
+      <button id="streaming">Streaming Services</button>
+      <button id="social">Social Media Services</button>
+    </div>
     <figure id="chart"></figure>
+    <label>
+    <input type="checkbox" id="includeValues" checked />
+      Include Values in Labels
+    </label>
+    <div id="valueCards"></div>
   </article>
   
   <script>
-    const width = 800;
+    const width = 1000;
     const height = 800;
-    const padding = 20;
+    const padding = 80;
     const effectiveRadius = Math.min(width, height) / 2 - padding;
     const radius = effectiveRadius;
+    const streamingServices = [
+      { "id": "netflix", "name": "Netflix", "logo": "", "color": "#E50914", "value": 10, "enabled": true},
+      { "id": "hulu", "name": "Hulu", "logo": "", "color": "#1ce783", "value": 45, "enabled": true },
+      { "id": "disneyplus", "name": "Disney+", "logo": "", "color": "#020E40", "value": 0, "enabled": true },
+      { "id": "hbomax", "name": "HBO Max", "logo": "", "color": "#991EEB", "value": 50, "enabled": true },
+      { "id": "paramountplus", "name": "Paramount+", "logo": "", "color": "#FF6000", "value": 60, "enabled": true },
+      { "id": "peacock", "name": "Peacock", "logo": "", "color": "#78C1FF", "value": 70, "enabled": true },
+      { "id": "youtube", "name": "YouTube", "logo": "", "color": "#FF0000", "value": 70, "enabled": false },
+    ];
+    const socialMediaServices = [
+      // ...
+    ];
 
     function load() {
 
       const svg = d3.select('#chart')
         .append('svg')
         .attr('viewBox', [0, 0, width / 2 + padding, height / 2 + padding].join(' '))
-        .attr('preserveAspectRatio', 'xMidYMid meet')
         .style('width', '100%')
         .style('height', 'auto')
-        .style('max-width', '600px');
+        .style('max-width', '800px');
 
       const arc = d3.arc()
         .innerRadius(0)
@@ -50,18 +72,166 @@
         .attr('transform', 'translate(' + (padding + radius) + ', ' + (padding + radius) + ')')
         .attr('fill', 'lightblue');
 
-      const data = [10, 30, 50, 70, 90];
-      data.forEach(d => {
-        const angle = (d / 90) * (Math.PI / 2) - Math.PI / 2;
+      svg.append('text')
+        .attr('x', padding - 30)
+        .attr('y', padding + radius + 5)
+        .text('👍');
+
+      svg.append('text')
+        .attr('x', padding + radius - 12)
+        .attr('y', padding - 10)
+        .text('💀');
+
+      for (let i = 5; i <= 90; i += 5) {
+        const angle = (i / 90) * (Math.PI / 2) - Math.PI / 2;
+        const outerX = padding + radius + (radius * Math.sin(angle));
+        const outerY = padding + radius - (radius * Math.cos(angle));
+        const innerRadius = radius - (i % 10 === 0 ? 10 : 5);
+        const innerX = padding + radius + (innerRadius * Math.sin(angle));
+        const innerY = padding + radius - (innerRadius * Math.cos(angle));
+        svg.append('line')
+          .attr('x1', outerX)
+          .attr('y1', outerY)
+          .attr('x2', innerX)
+          .attr('y2', innerY)
+          .attr('stroke', 'indigo')
+          .attr('stroke-width', (i % 10 === 0 ? 2 : 1));
+      }
+
+      let initialMousePosition;
+
+      function dragStarted(event, d) {
+        d3.select(this).raise().classed('active', true);
+        initialMousePosition = { x: event.x, y: event.y }; 
+      }
+
+      function dragging(event, d) {
+        const movementX = event.x - initialMousePosition.x;
+        const movementY = event.y - initialMousePosition.y;
+
+        let change = Math.round((movementX - movementY) / 10);
+        d.value = Math.max(0, Math.min(89, d.value + change));
+        let valueInput = document.querySelector(`#value-${d.id}`);
+        if (valueInput) {
+            valueInput.value = Math.round(d.value);
+        }
+
+        const newAngle = (d.value / 90) * (Math.PI / 2) - Math.PI / 2;
+        const newX = padding + radius + (radius * Math.sin(newAngle));
+        const newY = padding + radius - (radius * Math.cos(newAngle));
+
+        d3.select(this)
+          .attr('cx', newX)
+          .attr('cy', newY);
+
+        let includeValues = document.getElementById('includeValues').checked;
+
+        d3.select("#label-" + d.id)
+          .attr('x', newX + 10)
+          .attr('y', newY + 5)
+          .attr('id', 'label-' + d.id)
+          .text(d.name + (includeValues ? ' (' + Math.round(d.value) + ')' : ''));
+
+        initialMousePosition.x = event.x;
+        initialMousePosition.y = event.y;
+      }
+
+      function dragEnded(event, d) {
+        d3.select(this).classed('active', false);
+      }
+
+      const drag = d3.drag()
+        .on('start', dragStarted)
+        .on('drag', dragging)
+        .on('end', dragEnded);
+
+      const circles = svg.selectAll('circle')
+        .data(streamingServices)
+        .enter()
+        .append('circle')
+        .attr('id', d => 'circle-' + d.id)
+        .style('display', d => d.enabled ? null : 'none')
+        .attr('cx', d => padding + radius + (radius * Math.sin((d.value / 90) * (Math.PI / 2) - Math.PI / 2)))
+        .attr('cy', d => padding + radius - (radius * Math.cos((d.value / 90) * (Math.PI / 2) - Math.PI / 2)))
+        .attr('r', 5)
+        .attr('fill', d => d.color)
+        .call(drag);
+
+      streamingServices.forEach((d, i) => {
+        const angle = (d.value / 90) * (Math.PI / 2) - Math.PI / 2;
         const x = padding + radius + (radius * Math.sin(angle));
         const y = padding + radius - (radius * Math.cos(angle));
 
-        svg.append('circle')
-          .attr('cx', x)
-          .attr('cy', y)
-          .attr('r', 5)
-          .attr('fill', 'red');
+        let includeValues = document.getElementById('includeValues').checked;
+
+        svg.append('text')
+          .attr('x', x + 10)
+          .attr('y', y + 5)
+          .attr('id', 'label-' + d.id)
+          .style('display', d.enabled ? null : 'none')
+          .text(d.name + (includeValues ? ' (' + Math.round(d.value) + ')' : ''));
       });
+
+      document.getElementById('includeValues').addEventListener('change', function(e) {
+        const includeValues = e.target.checked;
+        streamingServices.forEach((d, i) => {
+          svg.select('#label-' + d.id)
+            .text(d.name + (includeValues ? ' (' + Math.round(d.value) + ')' : ''));
+        });
+      });
+
+      streamingServices.forEach((d, i) => {
+        let card = document.createElement('article');
+        card.style.border = '1px solid ' + (d.enabled ? d.color : 'lightgray');
+        let header = document.createElement('header');
+        header.innerText = d.name;
+        card.appendChild(header);
+        let enabledLabel = document.createElement('label');
+        let enabled = document.createElement('input');
+        enabled.type = 'checkbox';
+        enabled.checked = d.enabled;
+        enabledLabel.appendChild(enabled);
+        enabledLabel.appendChild(document.createTextNode('Enabled'));
+        enabled.addEventListener('change', function(e) {
+            d.enabled = e.target.checked;
+            if (d.enabled) {
+              svg.select('#circle-' + d.id).style('display', null);
+              svg.select('#label-' + d.id).style('display', null);
+            } else {
+              svg.select('#circle-' + d.id).style('display', 'none');
+              svg.select('#label-' + d.id).style('display', 'none');
+            }
+            card.style.border = '1px solid ' + (d.enabled ? d.color : 'lightgray');
+        });
+        card.appendChild(enabledLabel);
+        let value = document.createElement('input');
+        value.id = `value-${d.id}`;
+        value.type = 'number';
+        value.value = d.value;
+        value.min = 0;
+        value.max = 89;
+        value.step = 1;
+        value.addEventListener('input', function() {
+            d.value = Math.min(89, Math.max(0, this.value));
+            
+            const newAngle = (d.value / 90) * (Math.PI / 2) - Math.PI / 2;
+            const newX = padding + radius + (radius * Math.sin(newAngle));
+            const newY = padding + radius - (radius * Math.cos(newAngle));
+
+            svg.select(`circle[id='circle-${d.id}']`)
+                .attr('cx', newX)
+                .attr('cy', newY);
+
+            svg.select(`#label-${d.id}`)
+                .attr('x', newX + 10)
+                .attr('y', newY + 5)
+                .text(d.name + ' (' + Math.round(d.value) + ')');
+        });
+        card.appendChild(value);
+
+        document.getElementById('valueCards').appendChild(card);
+      });
+
     }
 
     document.addEventListener('DOMContentLoaded', load);
