@@ -27,18 +27,22 @@
     </div>
     <figure id="chart"></figure>
     <label>
-    <input type="checkbox" id="includeValues" checked />
+    <input type="checkbox" id="toggleLegend" />
       Include Values in Labels
     </label>
     <div id="valueCards"></div>
   </article>
   
   <script>
-    const width = 1000;
+    const width = 1200;
     const height = 800;
     const padding = 80;
-    const effectiveRadius = Math.min(width, height) / 2 - padding;
+    const chartWidth = 800;
+    const legendWidth = 300;
+    const effectiveRadius = Math.min(chartWidth, height) / 2 - padding;
     const radius = effectiveRadius;
+    const svgWidth = width + padding;
+    const svgHeight = radius * 2 + padding * 2;
     const labelOffsetX = 10;
     const labelOffsetY = -10;
     const streamingServices = [
@@ -127,7 +131,7 @@
         .attr('viewBox', [0, 0, width / 2 + padding, height / 2 + padding].join(' '))
         .style('width', '100%')
         .style('height', 'auto')
-        .style('max-width', '800px');
+        .style('max-width', chartWidth + 'px');
 
       const arc = d3.arc()
         .innerRadius(0)
@@ -183,7 +187,7 @@
 
       function dragStarted(event, d) {
         d3.select(this).raise().classed('active', true);
-        initialMousePosition = { x: event.x, y: event.y }; 
+        initialMousePosition = { "x": event.x, "y": event.y }; 
       }
 
       function dragging(event, d) {
@@ -203,11 +207,11 @@
           .attr('cy', newY);
 
         svg.select('#group-' + d.id)
-          .attr('transform', `translate(${newX + labelOffsetX}, ${newY + labelOffsetY})`);
+          .attr('transform', 'translate(' + (newX + labelOffsetX) + ',' + (newY + labelOffsetY) + ')');
 
-        let includeValues = document.getElementById('includeValues').checked;
-        d3.select('#label-' + d.id)
-          .text(includeValues ? '(' + Math.round(d.value) + ')' : '');
+        // let includeValues = document.getElementById('includeValues').checked;
+        // d3.select('#label-' + d.id)
+          // .text(includeValues ? Math.round(d.value) : '');
 
         initialMousePosition.x = event.x;
         initialMousePosition.y = event.y;
@@ -231,7 +235,7 @@
         .style('display', d => d.enabled ? null : 'none')
         .attr('cx', d => padding + radius + (radius * Math.sin((d.value / 90) * (Math.PI / 2) - Math.PI / 2)))
         .attr('cy', d => padding + radius - (radius * Math.cos((d.value / 90) * (Math.PI / 2) - Math.PI / 2)))
-        .attr('r', 5)
+        .attr('r', 6)
         .attr('fill', d => d.color)
         .call(drag);
 
@@ -241,26 +245,28 @@
         const x = padding + radius + (radius * Math.sin(angle)) + labelOffsetX;
         const y = padding + radius - (radius * Math.cos(angle)) + labelOffsetY;
 
-        let includeValues = document.getElementById('includeValues').checked;
+        // let includeValues = document.getElementById('includeValues').checked;
 
-        svg.append('g')
+        const group = svg.append('g')
           .attr('id', 'group-' + d.id)
           .style('display', d.enabled ? null : 'none')
-          .attr('transform', `translate(${x}, ${y})`)
-          .html(d.logo)
-          .append('text')
-          .attr('x', 0)
-          .attr('y', 0)
-          .attr('id', 'label-' + d.id);
+          .attr('transform', 'translate(' + x + ',' + y + ')')
+          .html(d.logo);
+
+        group.append('text')
+          .attr('x', -40)
+          .attr('y', 16)
+          .attr('id', 'label-' + d.id)
+          // .text(includeValues ? Math.round(d.value) : '');
       });
 
       // chart options
-      document.getElementById('includeValues').addEventListener('change', function(e) {
-        const includeValues = e.target.checked;
-        streamingServices.forEach((d, i) => {
-          svg.select('#label-' + d.id)
-            .text(includeValues ? '(' + Math.round(d.value) + ')' : '');
-        });
+      document.getElementById('toggleLegend').addEventListener('change', function() {
+        if (this.checked) {
+          svg.attr('viewBox', [0, 0, width / 2 + padding + legendWidth, height / 2 + padding].join(' '));        } else {
+          svg.attr('viewBox', [0, 0, width / 2 + padding, height / 2 + padding].join(' '))
+        }
+        updateLegend();
       });
 
       // value cards
@@ -302,11 +308,11 @@
             .attr('cy', newY);
 
           svg.select('#group-' + d.id)
-            .attr('transform', `translate(${newX + labelOffsetX}, ${newY + labelOffsetY})`);
+            .attr('transform', 'translate(' + (newX + labelOffsetX) + ',' + (newY + labelOffsetY) + ')');
 
-          let includeValues = document.getElementById('includeValues').checked;
-          svg.select('#label-' + d.id)
-            .text(includeValues ? '(' + Math.round(d.value) + ')' : '');
+          // let includeValues = document.getElementById('includeValues').checked;
+          // svg.select('#label-' + d.id)
+            // .text(includeValues ? Math.round(d.value) : '');
         });
         card.appendChild(value);
 
@@ -314,6 +320,37 @@
       });
 
     }
+
+    function updateLegend() {
+      // Remove existing legend items
+      svg.selectAll('.legend').remove();
+
+      // Filter the data for enabled services
+      const enabledServices = streamingServices.filter(d => d.enabled);
+
+      // Create a group for each legend item
+      const legendGroups = svg.selectAll('.legend')
+        .data(enabledServices)
+        .enter()
+        .append('g')
+          .attr('class', 'legend')
+          .attr('transform', (d, i) => 'translate(' + (svgWidth - legendWidth) + ',' + (i * 20) + ')');
+
+      // Append rectangles or SVG for color/logo
+      legendGroups.append('svg')
+        .html(d => d.logo)
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', 15)
+        .attr('height', 15);
+
+      // Append text labels
+      legendGroups.append('text')
+        .text(d => d.name + ': ' + Math.round(d.value))
+        .attr('x', 20)
+        .attr('y', 15);
+    }
+
 
     document.addEventListener('DOMContentLoaded', load);
   </script>
