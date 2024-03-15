@@ -90,7 +90,9 @@
         </footer>
       </article>
       <article>
-        <header>Services</header>
+        <header>
+          <input type="text" id="chartTitle" placeholder="Chart Title (Optional)" style="margin: 0" />
+        </header>
         <figure>
           <table>
             <tbody id="services"></tbody>
@@ -115,8 +117,8 @@
 
     <script>
       const services = document.getElementById('services');
-      const width = 1200;
-      const height = 1200;
+      const width = 1000;
+      const height = 1000;
       const padding = 80;
       const radius = Math.min(width, height) / 2 - padding;
       const labelOffsetX = 12;
@@ -206,6 +208,9 @@
       function pageLoad() {
         buildChart();
         resetToStreamingServices();
+        document.getElementById('chartTitle').addEventListener('input', function () {
+          document.getElementById('chart-title').innerHTML = this.value;
+        });
       }
 
       function getCurrentServices() {
@@ -237,7 +242,7 @@
         svg = d3
           .select('#chart')
           .append('svg')
-          .attr('viewBox', [0, 0, (width + padding) / 2, (height + padding) / 2].join(' '))
+          .attr('viewBox', [0, 0, (width + padding) / 2 + 80, (height + padding) / 2].join(' '))
           .style('width', '100%')
           .style('height', 'auto')
           .style('max-width', width + padding + 'px');
