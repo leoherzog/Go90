@@ -224,6 +224,9 @@
       function pageLoad() {
         buildChart();
         resetToStreamingServices();
+        document.getElementById('downloadPNG').addEventListener('click', function () {
+          // download d3 chart as PNG
+        });
         document.getElementById('chartTitle').addEventListener('input', function () {
           document.getElementById('chart-title').innerHTML = this.value;
         });
@@ -300,7 +303,8 @@
           .attr('viewBox', [0, 0, (width + padding) / 2 + 80, (height + padding) / 2].join(' '))
           .style('width', '100%')
           .style('height', 'auto')
-          .style('max-width', width + padding + 'px');
+          .style('max-width', width + padding + 'px')
+          .style('background-color', '#f9f9f9');
 
         const arc = d3
           .arc()
@@ -432,10 +436,10 @@
         // in that group is a circle
         serviceGroups
           .append('circle')
-          .attr('r', 10)
-          .attr('fill', (d) => d.color)
-          .style('stroke', 'white')
-          .style('stroke-width', 0.5)
+          .attr('r', 8)
+          .attr('fill', 'white')
+          .style('stroke', (d) => d.color)
+          .style('stroke-width', 3)
           .style('opacity', 0.75);
 
         // a logo image
@@ -444,22 +448,22 @@
           .attr('width', 300)
           .attr('height', 30)
           .attr('x', 12)
-          .attr('y', -18)
+          .attr('y', -16)
           .html((d) => d.logo);
 
         // and a value number
+
         serviceGroups
           .data(currentServices, (d) => d.id)
           .append('text')
           .attr('id', (d) => 'value-label-' + d.id)
           .attr('class', 'service-value')
           .attr('x', 0)
-          .attr('y', 3)
+          .attr('y', 3.5)
           .attr('text-anchor', 'middle')
-          .attr('font-size', '12px')
+          .attr('font-size', '10px')
           .attr('font-weight', 'bold')
           .attr('fill', 'black')
-          .style('text-shadow', '1px 1px 1px white')
           .style('display', document.getElementById('numbersToggle').checked ? 'block' : 'none')
           .text((d) => d.value);
       }
