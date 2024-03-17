@@ -94,27 +94,28 @@
       </article>
       <article>
         <header>
-          <input type="text" id="chartTitle" placeholder="Chart Title (Optional)" style="margin: 0" />
+          <input type="text" id="chartTitle" placeholder="Chart Title (Optional)" />
+          <label><input id="keyToggle" type="checkbox" checked /> Include Key</label>
         </header>
         <figure>
           <table>
             <tbody id="services"></tbody>
           </table>
         </figure>
-        <!-- <footer>
+        <footer>
           <details>
             <summary>Add Another Service</summary>
             <form id="addService">
               <label for="name">Service Name</label>
               <input type="text" id="name" />
               <label for="logo">Logo</label>
-              <input type="file" id="logo" accept="image/png, image/jpeg, image/svg+xml" />
+              <input type="file" id="logo" accept="image/png, image/jpeg, image/bmp, image/gif" />
               <label for="color">Color</label>
               <input type="color" id="color" />
-              <input type="submit" value="Add Service" disabled />
+              <input type="submit" value="Add Service" />
             </form>
           </details>
-        </footer> -->
+        </footer>
       </article>
     </div>
 
@@ -214,6 +215,10 @@
         document.getElementById('chartTitle').addEventListener('input', function () {
           document.getElementById('chart-title').innerHTML = this.value;
         });
+        document.getElementById('addService').addEventListener('submit', function (event) {
+          event.preventDefault();
+          addNewService();
+        });
       }
 
       function getCurrentServices() {
@@ -235,6 +240,30 @@
         });
         // currentServices = currentServices.filter((x) => x.enabled);
         return currentServices;
+      }
+
+      function addNewService() {
+        const name = document.getElementById('name').value;
+        const id = 'service-' + name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const logoInput = document.getElementById('logo');
+        const color = document.getElementById('color').value;
+        const enabled = true;
+        const value = Math.floor(Math.random() * (89 - 0 + 1));
+
+        let logo = '';
+
+        const file = logoInput.files[0];
+        const reader = new FileReader();
+
+        reader.onloadend = function () {
+          logo = reader.result;
+          let logoElement = '<img src="' + logo + '" alt="' + name + ' Logo" style="width:auto;height:20px;">';
+          addService(name, id, color, logoElement, enabled, value);
+          updateChart();
+          document.getElementById('addService').reset();
+        };
+
+        reader.readAsDataURL(file);
       }
 
       /**
@@ -386,7 +415,7 @@
 
         serviceGroups
           .append('foreignObject')
-          .attr('width', 120)
+          .attr('width', 300)
           .attr('height', 30)
           .attr('x', 12)
           .attr('y', -16)
