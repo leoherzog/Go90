@@ -233,7 +233,7 @@
           });
         });
         document.getElementById('labelIconsToggle').addEventListener('change', function () {
-          document.getElementById('zero-label').innerHTML = this.checked ? '👍' : '0';
+          document.getElementById('zero-label').innerHTML = this.checked ? '♾️' : '0';
           document.getElementById('ninety-label').innerHTML = this.checked ? '🪦' : '90';
         });
         document.getElementById('addService').addEventListener('submit', function (event) {
@@ -332,7 +332,7 @@
           .attr('id', 'zero-label')
           .attr('x', padding - 32)
           .attr('y', padding + radius + 5)
-          .text(document.getElementById('labelIconsToggle').checked ? '👍' : '0');
+          .text(document.getElementById('labelIconsToggle').checked ? '♾️' : '0');
 
         svg
           .append('text')
@@ -397,6 +397,7 @@
             let change = Math.round((movementX - movementY) / 10);
             d.value = Math.max(0, Math.min(89, d.value + change));
             document.getElementById('value-' + d.id).value = Math.round(d.value);
+            document.getElementById('value-' + d.id).dispatchEvent(new Event('change'));
 
             const newAngle = (d.value / 90) * (Math.PI / 2) - Math.PI / 2;
             const newX = padding + radius + radius * Math.sin(newAngle);
@@ -450,7 +451,9 @@
 
         // and a value number
         serviceGroups
+          .data(currentServices, (d) => d.id)
           .append('text')
+          .attr('id', (d) => 'value-label-' + d.id)
           .attr('class', 'service-value')
           .attr('x', 0)
           .attr('y', 3)
@@ -460,7 +463,6 @@
           .attr('fill', 'black')
           .style('text-shadow', '1px 1px 1px white')
           .style('display', document.getElementById('numbersToggle').checked ? 'block' : 'none')
-          .data(currentServices, (d) => d.id)
           .text((d) => d.value);
       }
 
@@ -499,16 +501,14 @@
         valueInput.style.maxWidth = '8ch';
         valueInput.style.height = '48px';
         valueInput.style.margin = '0';
-        valueInput.addEventListener('change', function (event) {
+        function valueChange(event) {
           const serviceId = this.id.replace('value-', '');
           const newValue = parseInt(this.value, 10);
           updateServicePosition(serviceId, newValue);
-        });
-        valueInput.addEventListener('keyup', function (event) {
-          const serviceId = this.id.replace('value-', '');
-          const newValue = parseInt(this.value, 10);
-          updateServicePosition(serviceId, newValue);
-        });
+          document.getElementById('value-label-' + serviceId).innerHTML = Math.round(newValue);
+        }
+        valueInput.addEventListener('change', valueChange);
+        valueInput.addEventListener('keyup', valueChange);
         valueCell.appendChild(valueInput);
         row.appendChild(valueCell);
         services.appendChild(row);
