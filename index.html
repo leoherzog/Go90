@@ -3,7 +3,7 @@
   <head>
     <title>The Go90 Scale of Doomed Streaming Services</title>
     <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.orange.min.css" />
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css" /> -->
     <style>
       :root {
@@ -89,7 +89,7 @@
         <footer id="chartButtons">
           <button id="downloadPNG">⬇️ PNG</button>
           <button id="downloadSVG">⬇️ SVG</button>
-          <button id="copyURL">📋 Copy URL</button>
+          <button id="share">↗️ Share</button>
         </footer>
       </article>
       <article>
@@ -114,6 +114,13 @@
               <input type="color" id="color" />
               <input type="submit" value="Add Service" />
             </form>
+          </details>
+          <details>
+            <summary>Presets</summary>
+            <fieldset role="group">
+              <button id="resetToStreamingServices">Reset to Streaming Services</button>
+              <button id="resetToSocialMediaServices">Reset to Social Media Services</button>
+            </fieldset>
           </details>
         </footer>
       </article>
@@ -219,6 +226,8 @@
           event.preventDefault();
           addNewService();
         });
+        document.getElementById('resetToStreamingServices').addEventListener('click', resetToStreamingServices);
+        document.getElementById('resetToSocialMediaServices').addEventListener('click', resetToSocialMediaServices);
       }
 
       function getCurrentServices() {
@@ -355,7 +364,7 @@
 
       function updateChart() {
         // remove all services
-        // svg.selectAll('.service-group').remove();
+        svg.selectAll('.service-group').remove();
 
         let currentServices = getCurrentServices();
 
@@ -480,17 +489,23 @@
       }
 
       function resetToStreamingServices() {
-        services.innerHTML = '';
+        while (services.firstChild) {
+          services.removeChild(services.firstChild);
+        }
         for (let service in streamingServices) {
-          addService(streamingServices[service].name, streamingServices[service].id, streamingServices[service].color, streamingServices[service].logo, streamingServices[service].enabled, streamingServices[service].value);
+          let randomValue = Math.min(89, Math.max(0, streamingServices[service].value + Math.floor(Math.random() * 31) - 15));
+          addService(streamingServices[service].name, streamingServices[service].id, streamingServices[service].color, streamingServices[service].logo, streamingServices[service].enabled, randomValue);
         }
         updateChart();
       }
 
       function resetToSocialMediaServices() {
-        services.innerHTML = '';
+        while (services.firstChild) {
+          services.removeChild(services.firstChild);
+        }
         for (let service in socialMediaServices) {
-          addService(streamingServices[service].name, streamingServices[service].id, streamingServices[service].color, streamingServices[service].logo, streamingServices[service].enabled, streamingServices[service].value);
+          let randomValue = Math.min(89, Math.max(0, streamingServices[service].value + Math.floor(Math.random() * 31) - 15));
+          addService(streamingServices[service].name, streamingServices[service].id, streamingServices[service].color, streamingServices[service].logo, streamingServices[service].enabled, randomValue);
         }
         updateChart();
       }
