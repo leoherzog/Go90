@@ -95,7 +95,12 @@
       <article>
         <header>
           <input type="text" id="chartTitle" placeholder="Chart Title (Optional)" />
-          <label><input id="numbersToggle" type="checkbox" checked /> Include Scores</label>
+          <fieldset>
+            <input type="checkbox" id="numbersToggle" name="numbersToggle" />
+            <label htmlFor="numbersToggle">Include Scores</label>
+            <input type="checkbox" id="labelIconsToggle" name="labelIconsToggle" />
+            <label htmlFor="labelIconsToggle">Use Label Icons</label>
+          </fieldset>
         </header>
         <figure>
           <table>
@@ -222,6 +227,15 @@
         document.getElementById('chartTitle').addEventListener('input', function () {
           document.getElementById('chart-title').innerHTML = this.value;
         });
+        document.getElementById('numbersToggle').addEventListener('change', function () {
+          Array.from(document.getElementsByClassName('service-value')).forEach((x) => {
+            x.style.display = this.checked ? 'block' : 'none';
+          });
+        });
+        document.getElementById('labelIconsToggle').addEventListener('change', function () {
+          document.getElementById('zero-label').innerHTML = this.checked ? '👍' : '0';
+          document.getElementById('ninety-label').innerHTML = this.checked ? '🪦' : '90';
+        });
         document.getElementById('addService').addEventListener('submit', function (event) {
           event.preventDefault();
           addNewService();
@@ -318,14 +332,14 @@
           .attr('id', 'zero-label')
           .attr('x', padding - 32)
           .attr('y', padding + radius + 5)
-          .text('👍');
+          .text(document.getElementById('labelIconsToggle').checked ? '👍' : '0');
 
         svg
           .append('text')
           .attr('id', 'ninety-label')
           .attr('x', padding + radius - 12)
           .attr('y', padding - 10)
-          .text('🪦');
+          .text(document.getElementById('labelIconsToggle').checked ? '🪦' : '90');
 
         svg
           .append('text')
@@ -366,8 +380,10 @@
         // remove all services
         svg.selectAll('.service-group').remove();
 
+        // get them from the dom
         let currentServices = getCurrentServices();
 
+        // define a drag behavior that we'll assign each of them
         const drag = d3
           .drag()
           .on('start', function (event, d) {
@@ -397,7 +413,7 @@
             d3.select(this).classed('active', false);
           });
 
-        // Creating Groups for Each Service
+        // create a group for each service
         const serviceGroups = svg
           .selectAll('.service-group')
           .data(currentServices, (d) => d.id)
@@ -414,14 +430,16 @@
           .style('display', (d) => (d.enabled ? 'block' : 'none'))
           .call(drag);
 
+        // in that group is a circle
         serviceGroups
           .append('circle')
-          .attr('r', 8)
+          .attr('r', 10)
           .attr('fill', (d) => d.color)
           .style('stroke', 'white')
           .style('stroke-width', 0.5)
           .style('opacity', 0.75);
 
+        // a logo image
         serviceGroups
           .append('foreignObject')
           .attr('width', 300)
@@ -429,6 +447,21 @@
           .attr('x', 12)
           .attr('y', -18)
           .html((d) => d.logo);
+
+        // and a value number
+        serviceGroups
+          .append('text')
+          .attr('class', 'service-value')
+          .attr('x', 0)
+          .attr('y', 3)
+          .attr('text-anchor', 'middle')
+          .attr('font-size', '12px')
+          .attr('font-weight', 'bold')
+          .attr('fill', 'black')
+          .style('text-shadow', '1px 1px 1px white')
+          .style('display', document.getElementById('numbersToggle').checked ? 'block' : 'none')
+          .data(currentServices, (d) => d.id)
+          .text((d) => d.value);
       }
 
       function addService(name, id, color, logo, enabled, value) {
