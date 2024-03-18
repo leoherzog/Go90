@@ -36,15 +36,20 @@
         border-bottom: none;
       }
 
-      article {
-        width: 600px;
+      main {
+        max-width: 1600px;
       }
 
       #cards {
         display: flex;
         flex-direction: row;
         justify-content: space-evenly;
-        align-items: flex-start;
+        align-items: center;
+      }
+
+      #chartCard {
+        width: 100%;
+        max-width: 720px;
       }
 
       #chart {
@@ -60,6 +65,11 @@
         display: flex;
         justify-content: space-evenly;
         align-items: center;
+      }
+
+      #servicesCard {
+        width: 100%;
+        max-width: 500px;
       }
 
       #addService {
@@ -83,53 +93,55 @@
 
   <body>
     <h1>The Go90 Scale of Doomed Streaming Services</h1>
-    <div id="cards">
-      <article>
-        <figure id="chart"></figure>
-        <footer id="chartButtons">
-          <button id="downloadPNG">⬇️ PNG</button>
-          <button id="downloadSVG">⬇️ SVG</button>
-          <button id="share">↗️ Share</button>
-        </footer>
-      </article>
-      <article>
-        <header>
-          <input type="text" id="chartTitle" placeholder="Chart Title (Optional)" />
-          <fieldset>
-            <input type="checkbox" id="numbersToggle" name="numbersToggle" />
-            <label htmlFor="numbersToggle">Include Scores</label>
-            <input type="checkbox" id="labelIconsToggle" name="labelIconsToggle" />
-            <label htmlFor="labelIconsToggle">Use Label Icons</label>
-          </fieldset>
-        </header>
-        <figure>
-          <table>
-            <tbody id="services"></tbody>
-          </table>
-        </figure>
-        <footer>
-          <details>
-            <summary>Add Another Service</summary>
-            <form id="addService">
-              <label for="name">Service Name</label>
-              <input type="text" id="name" />
-              <label for="logo">Logo</label>
-              <input type="file" id="logo" accept="image/png, image/jpeg, image/bmp, image/gif" />
-              <label for="color">Color</label>
-              <input type="color" id="color" />
-              <input type="submit" value="Add Service" />
-            </form>
-          </details>
-          <details>
-            <summary>Presets</summary>
-            <fieldset role="group">
-              <button id="resetToStreamingServices">Reset to Streaming Services</button>
-              <button id="resetToSocialMediaServices">Reset to Social Media Services</button>
+    <main>
+      <div id="cards">
+        <article id="chartCard">
+          <figure id="chart"></figure>
+          <footer id="chartButtons">
+            <button id="downloadPNG">⬇️ PNG</button>
+            <button id="downloadSVG">⬇️ SVG</button>
+            <button id="share">↗️ Share</button>
+          </footer>
+        </article>
+        <article id="servicesCard">
+          <header>
+            <input type="text" id="chartTitle" placeholder="Chart Title (Optional)" />
+            <fieldset>
+              <input type="checkbox" id="numbersToggle" name="numbersToggle" />
+              <label htmlFor="numbersToggle">Include Scores</label>
+              <input type="checkbox" id="labelIconsToggle" name="labelIconsToggle" />
+              <label htmlFor="labelIconsToggle">Use Label Icons</label>
             </fieldset>
-          </details>
-        </footer>
-      </article>
-    </div>
+          </header>
+          <figure>
+            <table>
+              <tbody id="services"></tbody>
+            </table>
+          </figure>
+          <footer>
+            <details>
+              <summary>Add Another Service</summary>
+              <form id="addService">
+                <label for="name">Service Name</label>
+                <input type="text" id="name" />
+                <label for="logo">Logo</label>
+                <input type="file" id="logo" accept="image/png, image/jpeg, image/bmp, image/gif" />
+                <label for="color">Color</label>
+                <input type="color" id="color" />
+                <input type="submit" value="Add Service" />
+              </form>
+            </details>
+            <details>
+              <summary>Presets</summary>
+              <fieldset role="group">
+                <button id="resetToStreamingServices">Reset to Streaming Services</button>
+                <button id="resetToSocialMediaServices">Reset to Social Media Services</button>
+              </fieldset>
+            </details>
+          </footer>
+        </article>
+      </div>
+    </main>
 
     <script>
       const services = document.getElementById('services');
@@ -384,10 +396,10 @@
         // remove all services
         svg.selectAll('.service-group').remove();
 
-        // get them from the dom
+        // get the current services and their values from the dom
         let currentServices = getCurrentServices();
 
-        // define a drag behavior that we'll assign each of them
+        // define a drag behavior that we'll assign each service group on the chart
         const drag = d3
           .drag()
           .on('start', function (event, d) {
@@ -416,7 +428,7 @@
             d3.select(this).classed('active', false);
           });
 
-        // create a group for each service
+        // create a group for each service with that drag
         const serviceGroups = svg
           .selectAll('.service-group')
           .data(currentServices, (d) => d.id)
@@ -443,7 +455,7 @@
           .style('opacity', 0.75);
 
         // a logo image
-        serviceGroups
+        let logos = serviceGroups
           .append('foreignObject')
           .attr('width', 300)
           .attr('height', 30)
