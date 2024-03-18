@@ -3,7 +3,7 @@
   <head>
     <title>The Go90 Scale of Doomed Streaming Services</title>
     <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.orange.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css" /> -->
     <style>
       :root {
@@ -109,7 +109,7 @@
             <fieldset>
               <input type="checkbox" id="numbersToggle" name="numbersToggle" />
               <label htmlFor="numbersToggle">Include Scores</label>
-              <input type="checkbox" id="labelIconsToggle" name="labelIconsToggle" />
+              <input type="checkbox" id="labelIconsToggle" name="labelIconsToggle" checked />
               <label htmlFor="labelIconsToggle">Use Label Icons</label>
             </fieldset>
           </header>
@@ -128,7 +128,7 @@
                 <input type="file" id="logo" accept="image/png, image/jpeg, image/bmp, image/gif" />
                 <label for="color">Color</label>
                 <input type="color" id="color" />
-                <input type="submit" value="Add Service" />
+                <input type="submit" id="submit" value="Add Service" disabled />
               </form>
             </details>
             <details>
@@ -149,8 +149,6 @@
       const height = 1000;
       const padding = 80;
       const radius = Math.min(width, height) / 2 - padding;
-      const labelOffsetX = 12;
-      const labelOffsetY = -12;
       const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--dust');
       const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--cool-blue');
       const streamingServices = [
@@ -233,11 +231,27 @@
 
       var svg;
 
+      function validateAddServiceForm() {
+        const name = document.getElementById('name').value;
+        document.getElementById('name').ariaInvalid = name === '';
+        const logo = document.getElementById('logo').value;
+        document.getElementById('logo').ariaInvalid = logo === '';
+        const color = document.getElementById('color').value;
+        document.getElementById('color').ariaInvalid = color === '';
+        document.getElementById('submit').disabled = name === '' || logo === '' || color === '';
+      }
+
       function pageLoad() {
         buildChart();
         resetToStreamingServices();
         document.getElementById('downloadPNG').addEventListener('click', function () {
           // download d3 chart as PNG
+        });
+        document.getElementById('downloadSVG').addEventListener('click', function () {
+          // download d3 chart as SVG
+        });
+        document.getElementById('share').addEventListener('click', function () {
+          // share to social media
         });
         document.getElementById('chartTitle').addEventListener('input', function () {
           document.getElementById('chart-title').innerHTML = this.value;
@@ -251,6 +265,10 @@
           document.getElementById('zero-label').innerHTML = this.checked ? '♾️' : '0';
           document.getElementById('ninety-label').innerHTML = this.checked ? '🪦' : '90';
         });
+        document.getElementById('name').addEventListener('input', validateAddServiceForm);
+        document.getElementById('logo').addEventListener('input', validateAddServiceForm);
+        document.getElementById('logo').addEventListener('change', validateAddServiceForm);
+        document.getElementById('color').addEventListener('input', validateAddServiceForm);
         document.getElementById('addService').addEventListener('submit', function (event) {
           event.preventDefault();
           addNewService();
@@ -276,7 +294,6 @@
         currentServices.forEach((service) => {
           style.insertRule('#enabled-' + service.id + ':checked { background-color: ' + service.color + '; border-color: ' + service.color + ' }', 0);
         });
-        // currentServices = currentServices.filter((x) => x.enabled);
         return currentServices;
       }
 
@@ -299,6 +316,10 @@
           addService(name, id, color, logoElement, enabled, value);
           updateChart();
           document.getElementById('addService').reset();
+          document.getElementById('name').ariaInvalid = '';
+          document.getElementById('logo').ariaInvalid = '';
+          document.getElementById('color').ariaInvalid = '';
+          document.getElementById('submit').disabled = true;
         };
 
         reader.readAsDataURL(file);
@@ -346,15 +367,15 @@
         svg
           .append('text')
           .attr('id', 'zero-label')
-          .attr('x', padding - 32)
-          .attr('y', padding + radius + 5)
+          .attr('x', padding - 40)
+          .attr('y', padding + radius + 8)
           .text(document.getElementById('labelIconsToggle').checked ? '♾️' : '0');
 
         svg
           .append('text')
           .attr('id', 'ninety-label')
           .attr('x', padding + radius - 12)
-          .attr('y', padding - 10)
+          .attr('y', padding - 20)
           .text(document.getElementById('labelIconsToggle').checked ? '🪦' : '90');
 
         svg
@@ -372,11 +393,11 @@
           .style('cursor', 'pointer');
 
         // tick marks
-        for (let i = 5; i <= 90; i += 5) {
+        for (let i = 5; i <= 85; i += 5) {
           const angle = (i / 90) * (Math.PI / 2) - Math.PI / 2;
           const outerX = padding + radius + radius * Math.sin(angle);
           const outerY = padding + radius - radius * Math.cos(angle);
-          const innerRadius = radius - (i % 10 === 0 ? 10 : 5);
+          const innerRadius = radius - (i % 10 === 0 ? 10 : 5) - 4;
           const innerX = padding + radius + innerRadius * Math.sin(angle);
           const innerY = padding + radius - innerRadius * Math.cos(angle);
           svg
@@ -386,7 +407,7 @@
             .attr('x2', innerX)
             .attr('y2', innerY)
             .attr('stroke', accentColor)
-            .attr('stroke-width', i % 10 === 0 ? 2 : 1);
+            .attr('stroke-width', i % 10 === 0 ? 2 : 0.5);
         }
 
         resetToStreamingServices();
@@ -460,13 +481,11 @@
           .attr('width', 300)
           .attr('height', 30)
           .attr('x', 12)
-          .attr('y', -16)
+          .attr('y', -20)
           .html((d) => d.logo);
 
         // and a value number
-
         serviceGroups
-          .data(currentServices, (d) => d.id)
           .append('text')
           .attr('id', (d) => 'value-label-' + d.id)
           .attr('class', 'service-value')
