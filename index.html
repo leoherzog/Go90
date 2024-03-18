@@ -108,9 +108,11 @@
             <input type="text" id="chartTitle" placeholder="Chart Title (Optional)" />
             <fieldset>
               <input type="checkbox" id="numbersToggle" name="numbersToggle" />
-              <label htmlFor="numbersToggle">Include Scores</label>
+              <label htmlFor="numbersToggle">Score Circles</label>
               <input type="checkbox" id="labelIconsToggle" name="labelIconsToggle" checked />
-              <label htmlFor="labelIconsToggle">Use Label Icons</label>
+              <label htmlFor="labelIconsToggle">Label Icons</label>
+              <input type="checkbox" id="keyToggle" name="keyToggle" />
+              <label htmlFor="keyToggle">Key</label>
             </fieldset>
           </header>
           <figure>
@@ -232,7 +234,13 @@
       var svg;
 
       function validateAddServiceForm() {
+        let currentServices = getCurrentServices();
         const name = document.getElementById('name').value;
+        if (currentServices.some((x) => x.id === name.toLowerCase().replace(/[^a-z0-9]/g, ''))) {
+          document.getElementById('name').ariaInvalid = true;
+          document.getElementById('submit').disabled = true;
+          return;
+        }
         document.getElementById('name').ariaInvalid = name === '';
         const logo = document.getElementById('logo').value;
         document.getElementById('logo').ariaInvalid = logo === '';
@@ -265,6 +273,9 @@
           document.getElementById('zero-label').innerHTML = this.checked ? '♾️' : '0';
           document.getElementById('ninety-label').innerHTML = this.checked ? '🪦' : '90';
         });
+        document.getElementById('keyToggle').addEventListener('change', function () {
+          document.getElementById('key').style.display = this.checked ? 'block' : 'none';
+        });
         document.getElementById('name').addEventListener('input', validateAddServiceForm);
         document.getElementById('logo').addEventListener('input', validateAddServiceForm);
         document.getElementById('logo').addEventListener('change', validateAddServiceForm);
@@ -287,6 +298,12 @@
           value: parseInt(x.children[2].children[0].value, 10),
           logo: x.children[1].innerHTML,
         }));
+        currentServices.sort((a, b) => {
+          if (a.value === b.value) {
+            return a.name.localeCompare(b.name);
+          }
+          return b.value - a.value;
+        });
         let style = document.getElementById('brandColors').sheet;
         while (style.cssRules.length > 0) {
           style.deleteRule(0);
@@ -414,9 +431,6 @@
       }
 
       function updateChart() {
-        // remove all services
-        svg.selectAll('.service-group').remove();
-
         // get the current services and their values from the dom
         let currentServices = getCurrentServices();
 
@@ -448,6 +462,9 @@
           .on('end', function (event, d) {
             d3.select(this).classed('active', false);
           });
+
+        // remove all services
+        svg.selectAll('.service-group').remove();
 
         // create a group for each service with that drag
         const serviceGroups = svg
@@ -497,6 +514,36 @@
           .attr('fill', 'black')
           .style('display', document.getElementById('numbersToggle').checked ? 'block' : 'none')
           .text((d) => d.value);
+
+        updateKey();
+      }
+
+      function updateKey() {
+        // remove key
+        svg.select('#key').remove();
+
+        // create new key
+        const key = svg
+          .append('text')
+          .attr('id', 'key')
+          .attr('x', padding + radius)
+          .attr('y', padding + radius + 8)
+          .attr('text-anchor', 'end')
+          .attr('font-size', '14px')
+          .attr('fill', 'black')
+          .style('display', document.getElementById('keyToggle').checked ? 'block' : 'none');
+
+        let reversedServices = getCurrentServices().slice().reverse();
+
+        reversedServices
+          .filter((x) => x.enabled)
+          .forEach((service, index) => {
+            key
+              .append('tspan')
+              .attr('x', padding + radius - 8)
+              .attr('dy', -16)
+              .text(service.name + ': ' + service.value);
+          });
       }
 
       function addService(name, id, color, logo, enabled, value) {
@@ -539,6 +586,7 @@
           const newValue = parseInt(this.value, 10);
           updateServicePosition(serviceId, newValue);
           document.getElementById('value-label-' + serviceId).innerHTML = Math.round(newValue);
+          updateKey();
         }
         valueInput.addEventListener('change', valueChange);
         valueInput.addEventListener('keyup', valueChange);
