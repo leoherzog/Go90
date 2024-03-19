@@ -551,7 +551,7 @@
           .attr('x', padding + radius)
           .attr('y', padding + radius + 8)
           .attr('text-anchor', 'end')
-          .attr('font-size', '14px')
+          .attr('font-size', '18px')
           .attr('fill', 'black')
           .style('display', document.getElementById('keyToggle').checked ? 'block' : 'none');
 
@@ -563,11 +563,11 @@
             key
               .append('tspan')
               .attr('x', padding + radius - 8)
-              .attr('dy', -16)
+              .attr('dy', -20)
               .style('fill', service.color)
               .style('font-weight', 'bold')
               .style('text-shadow', getContrastyColor(service.color, dust, steelyBlue) + ' 1px 1px 0px')
-              .text(service.name + ' - ' + service.value);
+              .html(service.name + ':&ensp;' + service.value);
           });
       }
 
