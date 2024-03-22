@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Go90 Scale of Doomed Streaming Services</title>
     <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+    <script src="https://kit.fontawesome.com/1591ea6353.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css" /> -->
     <style>
@@ -30,6 +31,10 @@
         --cloud: #f1f1f1;
       }
 
+      h1 {
+        margin: 32px;
+      }
+
       svg > text {
         cursor: default;
       }
@@ -43,6 +48,7 @@
       }
 
       #cards {
+        /* width: 100vw; */
         display: flex;
         flex-direction: row;
         justify-content: space-evenly;
@@ -78,12 +84,13 @@
         max-width: 100%;
       }
 
-      @media screen and (max-width: 960px) {
+      @media screen and (max-width: 1280px) {
         article {
           width: 100%;
         }
         #cards {
           flex-direction: column;
+          align-items: center;
         }
         #chart {
           min-width: 320px;
@@ -95,14 +102,13 @@
 
   <body>
     <h1>The Go90 Scale of Doomed Streaming Services</h1>
-    <main>
+    <main class="container-fluid">
       <div id="cards">
         <article id="chartCard">
           <figure id="chart"></figure>
           <footer id="chartButtons">
-            <button id="downloadPNG">⬇️ PNG</button>
-            <button id="downloadSVG">⬇️ SVG</button>
-            <button id="share">↗️ Share</button>
+            <button id="downloadPNG"><span class="fa-solid fa-download">⭳</span> PNG</button>
+            <button id="downloadSVG"><span class="fa-solid fa-download">⭳</span> SVG</button>
           </footer>
         </article>
         <article id="servicesCard">
@@ -341,6 +347,87 @@
 
       var svg;
 
+      function pageLoad() {
+        buildChart();
+        resetToStreamingServices();
+        document.getElementById('downloadPNG').addEventListener('click', function () {
+          const image = getChartAsPNG(padding);
+          image.onload = function () {
+            const canvas = document.createElement('canvas');
+            canvas.width = image.width;
+            canvas.height = image.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(image, 0, 0, image.width, image.height);
+            const DOMURL = window.URL || window.webkitURL || window;
+            DOMURL.revokeObjectURL(image.src);
+            const imgURI = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+            const a = document.createElement('a');
+            a.download = 'go90.png';
+            a.href = imgURI;
+            a.click();
+            a.remove();
+          };
+        });
+        document.getElementById('downloadSVG').addEventListener('click', function () {
+          let blob = getChartAsSVGBlob();
+          let url = URL.createObjectURL(blob);
+          let a = document.createElement('a');
+          a.href = url;
+          a.download = 'go90.svg';
+          a.click();
+          a.remove();
+        });
+        document.getElementById('chartTitle').addEventListener('input', function () {
+          document.getElementById('chart-title').innerHTML = this.value;
+        });
+        document.getElementById('numbersToggle').addEventListener('change', function () {
+          Array.from(document.getElementsByClassName('service-value')).forEach((x) => {
+            x.style.display = this.checked ? 'block' : 'none';
+          });
+        });
+        document.getElementById('labelIconsToggle').addEventListener('change', function () {
+          document.getElementById('zero-label').innerHTML = this.checked ? '♾️' : '0';
+          document.getElementById('ninety-label').innerHTML = this.checked ? '🪦' : '90';
+        });
+        document.getElementById('keyToggle').addEventListener('change', function () {
+          document.getElementById('key').style.display = this.checked ? 'block' : 'none';
+        });
+        document.getElementById('name').addEventListener('input', validateAddServiceForm);
+        document.getElementById('logo').addEventListener('input', validateAddServiceForm);
+        document.getElementById('logo').addEventListener('change', validateAddServiceForm);
+        document.getElementById('color').addEventListener('input', validateAddServiceForm);
+        document.getElementById('addService').addEventListener('submit', function (event) {
+          event.preventDefault();
+          addNewService();
+        });
+        document.getElementById('resetToStreamingServices').addEventListener('click', resetToStreamingServices);
+        document.getElementById('resetToSocialMediaServices').addEventListener('click', resetToSocialMediaServices);
+      }
+
+      function getChartAsSVGBlob() {
+        var serializer = new XMLSerializer();
+        var source = serializer.serializeToString(document.querySelector('#chart > svg'));
+        if (!source.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
+          source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+        }
+        if (!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/1999\/xlink"/)) {
+          source = source.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+        }
+        source = '<?xml version="1.0"?>\r\n' + source;
+        return new Blob([source], { type: 'image/svg+xml;charset=utf-8' });
+      }
+
+      function getChartAsPNG(padding) {
+        const DOMURL = window.URL || window.webkitURL || window;
+        let blob = getChartAsSVGBlob();
+        const url = DOMURL.createObjectURL(blob);
+        const image = new Image();
+        image.width = (width + padding) / 2 + 80;
+        image.height = (height + padding) / 2;
+        image.src = url;
+        return image;
+      }
+
       // https://stackoverflow.com/a/41491220
       function getContrastyColor(bgColor, lightColor, darkColor) {
         var color = bgColor.charAt(0) === '#' ? bgColor.substring(1, 7) : bgColor;
@@ -372,45 +459,6 @@
         const color = document.getElementById('color').value;
         document.getElementById('color').ariaInvalid = color === '';
         document.getElementById('submit').disabled = name === '' || logo === '' || color === '';
-      }
-
-      function pageLoad() {
-        buildChart();
-        resetToStreamingServices();
-        document.getElementById('downloadPNG').addEventListener('click', function () {
-          // download d3 chart as PNG
-        });
-        document.getElementById('downloadSVG').addEventListener('click', function () {
-          // download d3 chart as SVG
-        });
-        document.getElementById('share').addEventListener('click', function () {
-          // share to social media
-        });
-        document.getElementById('chartTitle').addEventListener('input', function () {
-          document.getElementById('chart-title').innerHTML = this.value;
-        });
-        document.getElementById('numbersToggle').addEventListener('change', function () {
-          Array.from(document.getElementsByClassName('service-value')).forEach((x) => {
-            x.style.display = this.checked ? 'block' : 'none';
-          });
-        });
-        document.getElementById('labelIconsToggle').addEventListener('change', function () {
-          document.getElementById('zero-label').innerHTML = this.checked ? '♾️' : '0';
-          document.getElementById('ninety-label').innerHTML = this.checked ? '🪦' : '90';
-        });
-        document.getElementById('keyToggle').addEventListener('change', function () {
-          document.getElementById('key').style.display = this.checked ? 'block' : 'none';
-        });
-        document.getElementById('name').addEventListener('input', validateAddServiceForm);
-        document.getElementById('logo').addEventListener('input', validateAddServiceForm);
-        document.getElementById('logo').addEventListener('change', validateAddServiceForm);
-        document.getElementById('color').addEventListener('input', validateAddServiceForm);
-        document.getElementById('addService').addEventListener('submit', function (event) {
-          event.preventDefault();
-          addNewService();
-        });
-        document.getElementById('resetToStreamingServices').addEventListener('click', resetToStreamingServices);
-        document.getElementById('resetToSocialMediaServices').addEventListener('click', resetToSocialMediaServices);
       }
 
       function getCurrentServices() {
@@ -454,7 +502,7 @@
 
         reader.onloadend = function () {
           logo = reader.result;
-          let logoElement = '<img src="' + logo + '" alt="' + name + ' Logo" style="width:auto;height:20px;">';
+          let logoElement = '<img src="' + logo + '" alt="' + name + ' Logo" style="width:auto;height:20px;" data-custom="true">';
           addService(name, id, color, logoElement, enabled, value);
           updateChart();
           document.getElementById('addService').reset();
@@ -479,7 +527,8 @@
           .style('width', '100%')
           .style('height', 'auto')
           .style('max-width', width + padding + 'px')
-          .style('background-color', '#f9f9f9');
+          .style('background-color', '#f9f9f9')
+          .style('font-family', 'system-ui, sans-serif');
 
         const arc = d3
           .arc()
