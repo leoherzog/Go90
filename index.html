@@ -101,6 +101,10 @@
   </head>
 
   <body>
+    <div style="position: absolute; top: 0px; left: 8px; cursor: pointer">
+      <span id="theme" style="font-size: 16px" aria-label="Toggle light and dark mode">🌙</span>
+    </div>
+
     <div style="position: absolute; top: 0px; right: 8px">
       <a href="https://github.com/leoherzog/Go90" class="contrast" aria-label="The Go90 GitHub repository">
         <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" height="24px">
@@ -410,6 +414,10 @@
         });
         document.getElementById('resetToStreamingServices').addEventListener('click', resetToStreamingServices);
         document.getElementById('resetToSocialMediaServices').addEventListener('click', resetToSocialMediaServices);
+        document.getElementById('theme').addEventListener('click', (e) => {
+          document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+          e.srcElement.innerText = document.documentElement.dataset.theme === 'dark' ? '☀️' : '🌙';
+        });
       }
 
       function getChartAsSVGBlob() {
@@ -536,6 +544,7 @@
           .style('height', 'auto')
           .style('max-width', width + padding + 'px')
           .style('background-color', '#f9f9f9')
+          .style('border-radius', '15px')
           .style('font-family', 'system-ui, sans-serif');
 
         const arc = d3
@@ -783,6 +792,7 @@
         let logoCell = document.createElement('td');
         logoCell.style.paddingLeft = '0';
         logoCell.style.paddingBottom = '14px';
+        // logoCell.style.textDecoration = 'none';
         logoCell.innerHTML = logo;
         logoCell.title = name + ' Logo';
         logoCell.dataset.tooltip = name;
