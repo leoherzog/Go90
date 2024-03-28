@@ -343,6 +343,7 @@
       ];
 
       var svg;
+      var logos;
 
       function pageLoad() {
         buildChart();
@@ -629,6 +630,8 @@
 
             initialMousePosition.x = event.x;
             initialMousePosition.y = event.y;
+
+            updateLogoPositions();
           })
           .on('end', function (event, d) {
             d3.select(this).classed('active', false);
@@ -647,8 +650,9 @@
           .attr('class', 'service-group')
           .style('cursor', 'pointer')
           .attr('transform', (d) => {
-            const x = padding + radius + radius * Math.sin((d.value / 90) * (Math.PI / 2) - Math.PI / 2);
-            const y = padding + radius - radius * Math.cos((d.value / 90) * (Math.PI / 2) - Math.PI / 2);
+            const angle = (d.value / 90) * (Math.PI / 2) - Math.PI / 2;
+            const x = padding + radius + radius * Math.sin(angle);
+            const y = padding + radius - radius * Math.cos(angle);
             return `translate(${x}, ${y})`;
           })
           .style('display', (d) => (d.enabled ? 'block' : 'none'))
@@ -664,13 +668,15 @@
           .style('opacity', 0.75);
 
         // a logo image
-        let logos = serviceGroups
+        logos = serviceGroups
           .append('foreignObject')
           .attr('width', 300)
           .attr('height', 30)
           .attr('x', 12)
           .attr('y', -20)
           .html((d) => d.logo);
+
+        updateLogoPositions();
 
         // and a value number
         serviceGroups
@@ -687,6 +693,31 @@
           .text((d) => d.value);
 
         updateKey();
+      }
+
+      function updateLogoPositions() {
+        const logoSize = 16;
+        const logoMargin = 5;
+
+        logos.each(function (d, i) {
+          const logo = d3.select(this);
+          const angle = (d.value / 90) * (Math.PI / 2) - Math.PI / 2;
+          const x = 12;
+          let y = -20;
+
+          for (let j = 0; j < i; j++) {
+            const prevLogo = logos.filter((_, k) => k === j);
+            const prevAngle = (prevLogo.datum().value / 90) * (Math.PI / 2) - Math.PI / 2;
+            const prevDistance = Math.abs(angle - prevAngle) * radius;
+            const prevY = prevLogo.attr('y');
+
+            if (prevDistance < logoSize + logoMargin && Math.abs(y - prevY) < logoSize + logoMargin) {
+              y = parseFloat(prevY) - (logoSize + logoMargin);
+            }
+          }
+
+          logo.attr('x', x).attr('y', y);
+        });
       }
 
       function updateKey() {
@@ -764,6 +795,7 @@
           updateServicePosition(serviceId, newValue);
           document.getElementById('value-label-' + serviceId).innerHTML = Math.round(newValue);
           updateKey();
+          updateLogoPositions();
         }
         valueInput.addEventListener('change', valueChange);
         valueInput.addEventListener('keyup', valueChange);
