@@ -795,7 +795,7 @@
           updateServicePosition(serviceId, newValue);
           document.getElementById('value-label-' + serviceId).innerHTML = Math.round(newValue);
           updateKey();
-          updateLogoPositions();
+          updateChart();
         }
         valueInput.addEventListener('change', valueChange);
         valueInput.addEventListener('keyup', valueChange);
