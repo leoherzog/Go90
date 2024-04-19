@@ -501,7 +501,7 @@
             const angle = (d.value / 90) * (Math.PI / 2) - Math.PI / 2;
             const x = padding + radius + radius * Math.sin(angle);
             const y = padding + radius - radius * Math.cos(angle);
-            return `translate(${x}, ${y})`;
+            return 'translate(' + x + ',' + y + ')';
           })
           .style('display', (d) => (d.enabled ? 'block' : 'none'))
           .call(drag);
@@ -643,17 +643,27 @@
         valueInput.style.margin = '0';
         function valueChange(event) {
           const serviceId = this.id.replace('value-', '');
-          const newValue = parseInt(this.value, 10);
+          let newValue = parseInt(this.value, 10);
+          if (isNaN(newValue)) newValue = 0;
+          newValue = Math.max(0, Math.min(89, newValue));
+          this.value = newValue;
           const newAngle = (newValue / 90) * (Math.PI / 2) - Math.PI / 2;
           const newX = padding + radius + radius * Math.sin(newAngle);
           const newY = padding + radius - radius * Math.cos(newAngle);
-          svg.select(`#group-${serviceId}`).attr('transform', `translate(${newX},${newY})`);
+          svg.select('#group-' + serviceId).attr('transform', 'translate(' + newX + ',' + newY + ')');
           document.getElementById('value-label-' + serviceId).innerHTML = Math.round(newValue);
           updateKey();
           updateChart();
         }
         valueInput.addEventListener('change', valueChange);
-        valueInput.addEventListener('keyup', valueChange);
+        let timeout;
+        valueInput.addEventListener('input', function () {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            valueChange.call(this);
+          }, 1000);
+        });
+
         valueCell.appendChild(valueInput);
         row.appendChild(valueCell);
         services.appendChild(row);
