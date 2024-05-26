@@ -164,6 +164,7 @@
           <footer id="chartButtons">
             <button id="downloadPNG"><span class="fa-solid fa-download">⭳</span> PNG</button>
             <button id="downloadSVG"><span class="fa-solid fa-download">⭳</span> SVG</button>
+            <button id="copyAltText"><span class="fa-solid fa-copy">⎘</span> <span id="copyAltTextLabel">Copy Alt Text</span></button>
           </footer>
         </article>
         <article id="servicesCard">
@@ -251,6 +252,15 @@
           a.download = 'go90.svg';
           a.click();
           a.remove();
+        });
+        document.getElementById('copyAltText').addEventListener('click', function () {
+          let clipboardText = this.getAttribute('data-clipboard-text');
+          navigator.clipboard.writeText(clipboardText).then(() => {
+            document.getElementById('copyAltTextLabel').innerText = 'Copied!';
+            setTimeout(() => {
+              document.getElementById('copyAltTextLabel').innerText = 'Copy Alt Text';
+            }, 2000);
+          });
         });
         document.getElementById('chartTitle').addEventListener('input', function () {
           document.getElementById('chart-title').innerHTML = this.value;
@@ -391,7 +401,6 @@
           logo = reader.result;
           let logoElement = '<img src="' + logo + '" alt="' + name + ' Logo" style="width:auto;height:20px;" data-custom="true">';
           addService(name, id, color, logoElement, enabled, value);
-          updateKey();
           updateChart();
           document.getElementById('addService').reset();
           document.getElementById('name').ariaInvalid = '';
@@ -583,6 +592,11 @@
           .text((d) => d.value);
 
         updateKey();
+
+        document.getElementById('copyAltText').setAttribute('data-clipboard-text', 'A chart in the shape of a quarter of a circle showing the likelihood of various streaming services to be shut down soon. It’s a scale of 0 to 89, with 0 on the left and 89 at the top.');
+        currentServices.forEach((service) => {
+          document.getElementById('copyAltText').setAttribute('data-clipboard-text', document.getElementById('copyAltText').getAttribute('data-clipboard-text') + ' ' + service.name + ' is rated at ' + service.value + '.');
+        });
       }
 
       // calculate overlap for each service logo and adjust their positions
