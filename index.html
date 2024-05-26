@@ -3,7 +3,37 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="description" content="Generate your own Go90 Scale of Doomed Streaming Services. Who is about to Go 90?" />
+    <meta name="keywords" content="media, streaming services, netflix, disney+, hulu, hbo, max, apple tv+, verge, vergecast" />
+    <meta name="author" content="Leo Herzog | herzog.tech" />
+    <meta name="theme-color" content="#1f212d" />
+    <link href="/manifest.webmanifest" rel="manifest" />
+    <link href="/favicon.ico" rel="icon" />
+    <link href="/img/go90-icon-1x.png" rel="icon" type="image/png" sizes="128x128" />
+    <link href="/img/go90-icon-2x.png" rel="icon" type="image/png" sizes="256x256" />
+    <link href="/img/go90-icon-3x.png" rel="icon" type="image/png" sizes="512x512" />
+    <link href="/img/go90-icon-1x.png" rel="apple-touch-icon" type="image/png" sizes="128x128" />
+    <link href="/img/go90-icon-2x.png" rel="apple-touch-icon" type="image/png" sizes="256x256" />
+    <link href="/img/go90-icon-3x.png" rel="apple-touch-icon" type="image/png" sizes="512x512" />
+    <meta name="msapplication-TileColor" content="#1f212d" />
+    <meta name="msapplication-TileImage" content="/img/go90-icon-2x.png" />
+    <meta property="og:image" content="/img/social.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="640" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://go90scaleofdoomedstreaming.services/" />
+    <meta property="og:title" content="The Go90 Scale of Doomed Streaming Services" />
+    <meta property="og:description" content="Generate your own Go90 Scale of Doomed Streaming Services. Who is about to Go 90?" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@xd1936" />
+    <meta name="twitter:title" content="The Go90 Scale of Doomed Streaming Services" />
+    <meta name="twitter:description" content="Generate your own Go90 Scale of Doomed Streaming Services. Who is about to Go 90?" />
+    <meta name="twitter:image" content="/img/social.png" />
+
     <title>The Go90 Scale of Doomed Streaming Services</title>
+
     <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
     <script src="https://kit.fontawesome.com/1591ea6353.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
@@ -112,8 +142,19 @@
     </div>
 
     <hgroup style="margin: 24px">
-      <h1>The Go90 Scale of Doomed Streaming Services</h1>
-      <h2><a href="https://www.theverge.com/2022/12/14/23508908/the-streaming-world-is-rapidly-changing" target="_blank">wtf does that mean?</a></h2>
+      <h1 style="margin-bottom: 16px">The Go90 Scale of Doomed Streaming Services</h1>
+      <details>
+        <summary>wtf does this mean?</summary>
+        <p>
+          <a href="https://en.wikipedia.org/wiki/Go90#Demise" target="_blank">go90</a> was a failed streaming service by Verizon from 2015–2018. <a href="https://www.theverge.com/the-vergecast" target="_blank">The Vergecast</a>, the flagship podcast of
+          <a href="https://www.theverge.com/" target="_blank">The Verge</a>, has a recurring joke based on this story. Each streaming service is given a rating between 0, meaning "no chance of going away any time soon", and 89, or "about to be shut down". Once a service is discontinued, it is said
+          to have "gone 90".
+        </p>
+        <p>
+          <a href="https://www.theverge.com/2022/12/14/23508908/the-streaming-world-is-rapidly-changing" target="_blank"><button>Listen to a Vergecast Episode about the Go90 Scale</button></a>
+        </p>
+        <p>How likely do <em>you</em> think these services are to go away soon?</p>
+      </details>
     </hgroup>
 
     <main class="container-fluid">
@@ -350,6 +391,7 @@
           logo = reader.result;
           let logoElement = '<img src="' + logo + '" alt="' + name + ' Logo" style="width:auto;height:20px;" data-custom="true">';
           addService(name, id, color, logoElement, enabled, value);
+          updateKey();
           updateChart();
           document.getElementById('addService').reset();
           document.getElementById('name').ariaInvalid = '';
@@ -392,8 +434,8 @@
         svg
           .append('text')
           .attr('id', 'chart-title')
-          .attr('x', 10)
-          .attr('y', padding - 10)
+          .attr('x', 16)
+          .attr('y', padding - 48)
           .attr('text-anchor', 'left')
           .attr('font-size', '20px')
           .attr('font-weight', 'bold')
@@ -617,7 +659,7 @@
         enabledCheckbox.addEventListener('change', function (event) {
           const serviceGroup = svg.select('#group-' + this.id.replace('enabled-', ''));
           serviceGroup.style('display', this.checked ? 'block' : 'none');
-          updateKey();
+          updateChart();
         });
         enabledCell.appendChild(enabledCheckbox);
         row.appendChild(enabledCell);
@@ -652,7 +694,6 @@
           const newY = padding + radius - radius * Math.cos(newAngle);
           svg.select('#group-' + serviceId).attr('transform', 'translate(' + newX + ',' + newY + ')');
           document.getElementById('value-label-' + serviceId).innerHTML = Math.round(newValue);
-          updateKey();
           updateChart();
         }
         valueInput.addEventListener('change', valueChange);

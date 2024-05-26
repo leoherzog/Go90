@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 1280 640"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="social.svg"
+   width="1280"
+   height="640"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   inkscape:export-filename="Go90-Icon-1x.png"
+   inkscape:export-xdpi="49.152"
+   inkscape:export-ydpi="49.152"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#f1f1f1"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     showguides="false"
+     inkscape:zoom="0.56135092"
+     inkscape:cx="608.35386"
+     inkscape:cy="268.10324"
+     inkscape:window-width="1503"
+     inkscape:window-height="933"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1"
+     inkscape:export-bgcolor="#f1f1f1ff" />
+  <!--!Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.-->
+  <text
+     xml:space="preserve"
+     style="font-weight:bold;font-size:106.667px;line-height:0.99;font-family:Verlag;-inkscape-font-specification:'Verlag Bold';text-align:center;text-anchor:middle;fill:#ffffff;stroke-width:0.944"
+     x="61.630936"
+     y="145.49669"
+     id="text1"><tspan
+       sodipodi:role="line"
+       x="61.630936"
+       y="145.49669"
+       id="tspan2"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:106.667px;font-family:Inter;-inkscape-font-specification:'Inter Bold';text-align:start;text-anchor:start;fill:#1f212d;fill-opacity:1">The Go90</tspan><tspan
+       sodipodi:role="line"
+       x="61.630936"
+       y="251.14709"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:106.667px;font-family:Inter;-inkscape-font-specification:'Inter Bold';text-align:start;text-anchor:start;fill:#1f212d;fill-opacity:1"
+       id="tspan5">Scale of</tspan><tspan
+       sodipodi:role="line"
+       x="61.630936"
+       y="356.79752"
+       id="tspan3"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:106.667px;font-family:Inter;-inkscape-font-specification:'Inter Bold';text-align:start;text-anchor:start;fill:#1f212d;fill-opacity:1">Doomed</tspan><tspan
+       sodipodi:role="line"
+       x="61.630936"
+       y="462.44791"
+       id="tspan4"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:106.667px;font-family:Inter;-inkscape-font-specification:'Inter Bold';text-align:start;text-anchor:start;fill:#1f212d;fill-opacity:1">Streaming</tspan><tspan
+       sodipodi:role="line"
+       x="61.630936"
+       y="568.09833"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:106.667px;font-family:Inter;-inkscape-font-specification:'Inter Bold';text-align:start;text-anchor:start;fill:#1f212d;fill-opacity:1"
+       id="tspan6">Services</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:96px;line-height:0.99;font-family:Inter;-inkscape-font-specification:'Inter Semi-Bold';text-align:start;text-anchor:start;fill:#1f212d;stroke-width:0.944"
+     x="118.39389"
+     y="129.91417"
+     id="text2"><tspan
+       sodipodi:role="line"
+       id="tspan1"
+       x="118.39389"
+       y="129.91417"
+       style="fill:#000000" /></text>
+  <g
+     id="g6"
+     transform="translate(8.228168,3.3847147)">
+    <path
+       id="path1"
+       style="mix-blend-mode:color;fill:#1f212d;fill-opacity:1;stroke-width:1.47158;stroke-dasharray:none"
+       d="m 1129.4878,182.87096 c -1.57,0.0156 -3.1614,0.12035 -4.7711,0.32274 -170.56652,21.19211 -305.66658,156.29258 -326.85862,326.85962 -3.23767,25.75428 18.10235,46.94605 44.1509,46.94605 h 282.56162 c 26.0485,0 47.0919,-21.04356 47.0919,-47.0922 V 227.34475 c 0,-24.4206 -18.6257,-44.70176 -42.1747,-44.47379 z M 924.04485,325.94398 H 1027.162 c 14.219,0 25.7793,11.55744 25.7793,25.77634 v 103.11754 c 0,14.2189 -11.5603,25.77938 -25.7793,25.77938 H 924.04485 c -14.21882,0 -25.77931,-11.56048 -25.77931,-25.77938 V 351.72032 c 0,-14.2189 11.56049,-25.77634 25.77931,-25.77634 z m 192.69475,12.91253 c 2.2909,-0.11583 4.6171,0.37929 6.7318,1.50712 4.1892,2.25569 6.808,6.60363 6.808,11.35669 v 103.11754 c 0,4.75306 -2.6188,9.10405 -6.808,11.35973 -4.1891,2.25571 -9.2627,2.01608 -13.2504,-0.64243 l -38.6704,-25.77939 -5.7211,-3.82715 v -6.89015 -51.55876 -6.88708 l 5.7211,-3.82719 38.6704,-25.77938 c 1.9737,-1.3091 4.2277,-2.03374 6.5186,-2.14955 z" />
+    <g
+       id="g2"
+       transform="matrix(0.18268082,0,0,0.18268082,1132.9801,50.480172)">
+      <g
+         id="g1">
+        <path
+           class="fa-secondary"
+           opacity="0.4"
+           d="M 224,0 C 118,0 32,86 32,192 V 448 H 416 V 192 C 416,86 330,0 224,0 Z m 24,152 v 40 h 48 c 13.3,0 24,10.7 24,24 0,13.3 -10.7,24 -24,24 h -48 v 120 c 0,13.3 -10.7,24 -24,24 -13.3,0 -24,-10.7 -24,-24 V 240 h -48 c -13.3,0 -24,-10.7 -24,-24 0,-13.3 10.7,-24 24,-24 h 48 v -40 c 0,-13.3 10.7,-24 24,-24 13.3,0 24,10.7 24,24 z"
+           id="path1-5"
+           style="fill:#1f212d;fill-opacity:1" />
+        <path
+           class="fa-primary"
+           d="m 248,152 c 0,-13.3 -10.7,-24 -24,-24 -13.3,0 -24,10.7 -24,24 v 40 h -48 c -13.3,0 -24,10.7 -24,24 0,13.3 10.7,24 24,24 h 48 v 120 c 0,13.3 10.7,24 24,24 13.3,0 24,-10.7 24,-24 V 240 h 48 c 13.3,0 24,-10.7 24,-24 0,-13.3 -10.7,-24 -24,-24 H 248 Z M 32,448 c -17.7,0 -32,14.3 -32,32 0,17.7 14.3,32 32,32 h 384 c 17.7,0 32,-14.3 32,-32 0,-17.7 -14.3,-32 -32,-32 z"
+           id="path2"
+           style="fill:#1f212d;fill-opacity:1" />
+      </g>
+    </g>
+    <path
+       d="m 721.94517,591.51982 c 25.82833,0 46.76627,-20.93798 46.76627,-46.76629 0,-25.8283 -20.93794,-46.76629 -46.76627,-46.76629 -25.82832,0 -46.76627,20.93799 -46.76627,46.76629 0,25.82831 20.93795,46.76629 46.76627,46.76629 z m -28.72482,-48.10379 c 0,-7.19017 5.83473,-13.02491 13.02491,-13.02491 3.45596,0 6.76828,1.37342 9.20989,3.81502 l 6.49002,6.48103 6.48103,-6.48103 c 2.4506,-2.4416 5.76291,-3.81502 9.21888,-3.81502 7.19018,0 13.02491,5.83474 13.02491,13.02491 v 2.66602 c 0,7.19916 -5.83473,13.03388 -13.02491,13.03388 -3.45597,0 -6.76828,-1.3734 -9.20989,-3.81501 l -6.49002,-6.48103 -6.48103,6.48103 c -2.4506,2.44161 -5.76292,3.81501 -9.21888,3.81501 -7.19018,0 -13.02491,-5.83472 -13.02491,-13.02491 z m 24.65846,1.3375 -6.48105,-6.48103 c -1.36442,-1.36443 -3.22255,-2.13642 -5.1525,-2.13642 -4.02148,0 -7.27995,3.25847 -7.27995,7.27995 v 2.66602 c 0,4.02147 3.25847,7.27994 7.27995,7.27994 1.92995,0 3.78808,-0.76299 5.1525,-2.13641 z m 8.12374,0 6.48103,6.48103 c 1.36444,1.36444 3.22257,2.13641 5.15252,2.13641 4.02146,0 7.27994,-3.25847 7.27994,-7.27995 v -2.67499 c 0,-4.02148 -3.25848,-7.27995 -7.27994,-7.27995 -1.92995,0 -3.78808,0.76301 -5.15252,2.13642 l -6.47205,6.48103 z"
+       style="fill:#1f212d;fill-opacity:1;stroke-width:0.0897652"
+       id="path1-7" />
+  </g>
+</svg>
